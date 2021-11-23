@@ -8,23 +8,63 @@ class Sudoku:
     def __init__(self, puzzle: Iterable[Iterable]):
 
         self._grid: dict[tuple, int] = {}
+        self.row_list: list[list: int] = []
+        self.column_list: list[list: int] = []
+        # self.block_list: list[list: int] = []
         y = 0
         x = 0
         for puzzle_row in puzzle:
+            sing_row = []
             for element in puzzle_row:
-                self._grid[x, y] = int(element)
+                val_sq = int(element)
+                self._grid[x, y] = val_sq
+                sing_row.append(val_sq)
                 x += 1
                 if x == 9:
                     x = 0
+            self.row_list.append(sing_row)
             y += 1
+        for i in range(9):
+            sing_col = []
+            for j in range(9):
+                val_col = self._grid[i, j]
+                sing_col.append(val_col)
+            self.column_list.append(sing_col)
+
+        # my thing
+        # block_row_list = []
+        # for i in range(9):
+        #     x_start = (i % 3) * 3
+        #     y_start = (i // 3) * 3
+
+        #     for y in range(y_start, y_start + 3):
+        #         sing_block_row = []
+        #         for x in range(x_start, x_start + 3):
+        #             sing_block_row.append(self._grid[x, y])
+        #         block_row_list.append(sing_block_row)
+        
+        # for i in range(0, 27, 3):
+        #     whole_block = block_row_list[i] + block_row_list[i+1] + block_row_list[i+2]
+        #     self.block_list.append(whole_block)
+        # print(self.block_list)
+  
+
+        
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
         self._grid[x, y] = value
+        self.row_list[y][x] = value
+        self.column_list[x][y] = value
+        # self.block_list[x][y] = value
 
     def unplace(self, x: int, y: int) -> None:
         """Remove (unplace) a number at x,y."""
         self._grid[x, y] = 0
+        self.row_list[y][x] = 0
+        self.column_list[x][y] = 0
+        # self.block_list[x][y] = 0
+
 
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
@@ -70,23 +110,34 @@ class Sudoku:
 
     def row_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th row."""
-        values = []
+        # values = []
 
-        for j in range(9):
-            # values.append(self.value_at(j, i))
-            values.append(self._grid[j, i])
+        # for j in range(9):
+        #     values.append(self._grid[j, i])
+
+        # return values
+
+        # my thing
+        values = self.row_list[i]
 
         return values
+
+
 
     def column_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th column."""
-        values = []
+        # values = []
 
-        for j in range(9):
-            # values.append(self.value_at(i, j))
-            values.append(self._grid[i, j])
+        # for j in range(9):
+        #     # values.append(self.value_at(i, j))
+        #     values.append(self._grid[i, j])
 
-        return values
+        # return values
+
+        # my thing
+
+        values = self.column_list[i]
+        return values 
 
     def block_values(self, i: int) -> Iterable[int]:
         """
@@ -106,30 +157,43 @@ class Sudoku:
                 # values.append(self.value_at(x, y))
                 values.append(self._grid[x, y])
 
+        # my thing
+        # values = self.block_list[i]
+        # return values
         return values
-
+        
     def is_solved(self) -> bool:
         """
         Returns True if and only if all rows, columns and blocks contain
         only the numbers 1 through 9. False otherwise.
         """
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        # values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        zero = 0
 
         result = True
 
         for i in range(9):
-            for value in values:
-                if value not in self.column_values(i):
+            # for value in values:
+            #     if value not in self.column_values(i):
+            #         result = False
+            #         return result
+                if zero in self.column_values(i):
                     result = False
                     return result
 
-                if value not in self.row_values(i):
+                # if value not in self.row_values(i):
+                #     result = False
+                #     return result
+                if zero in self.row_values(i):
                     result = False
-                    return result
+                    return result 
 
-                if value not in self.block_values(i):
+                # if value not in self.block_values(i):
+                #     result = False
+                #     return result
+                if zero in self.row_values(i):
                     result = False
-                    return result
+                    return result 
 
         return result
 
