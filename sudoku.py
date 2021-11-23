@@ -31,7 +31,6 @@ class Sudoku:
         value = self._grid[x, y]
         return value
 
-
     def options_at(self, x: int, y: int) -> Iterable[int]:
         """Returns all possible values (options) at x,y."""
         options = [1, 2, 3, 4, 5, 6, 7, 8, 9]
