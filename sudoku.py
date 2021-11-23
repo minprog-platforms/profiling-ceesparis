@@ -6,46 +6,31 @@ class Sudoku:
     """A mutable sudoku puzzle."""
 
     def __init__(self, puzzle: Iterable[Iterable]):
-        self._grid: list[str] = []
 
+        self._grid: dict[tuple, int] = {}
+        y = 0
+        x = 0
         for puzzle_row in puzzle:
-            row = ""
-
             for element in puzzle_row:
-                row += str(element)
-
-            self._grid.append(row)
+                self._grid[x, y] = int(element)
+                x += 1
+                if x == 9:
+                    x = 0
+            y += 1
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
-        row = self._grid[y]
-        new_row = ""
-
-        for i in range(9):
-            if i == x:
-                new_row += str(value)
-            else:
-                new_row += row[i]
-
-        self._grid[y] = new_row
+        self._grid[x, y] = value
 
     def unplace(self, x: int, y: int) -> None:
         """Remove (unplace) a number at x,y."""
-        row = self._grid[y]
-        new_row = row[:x] + "0" + row[x + 1:]
-        self._grid[y] = new_row
+        self._grid[x, y] = 0
 
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
-        value = -1
-
-        for i in range(9):
-            for j in range(9):
-                if i == x and j == y:
-                    row = self._grid[y]
-                    value = int(row[x])
-
+        value = self._grid[x, y]
         return value
+
 
     def options_at(self, x: int, y: int) -> Iterable[int]:
         """Returns all possible values (options) at x,y."""
@@ -76,21 +61,21 @@ class Sudoku:
         Returns the next index (x,y) that is empty (value 0).
         If there is no empty spot, returns (-1,-1)
         """
-        next_x, next_y = -1, -1
-
         for y in range(9):
             for x in range(9):
-                if self.value_at(x, y) == 0 and next_x == -1 and next_y == -1:
-                    next_x, next_y = x, y
+                if self._grid[x, y] == 0:
+                    return x, y 
+        x, y = -1, -1 
+        return x, y
 
-        return next_x, next_y
 
     def row_values(self, i: int) -> Iterable[int]:
         """Returns all values at i-th row."""
         values = []
 
         for j in range(9):
-            values.append(self.value_at(j, i))
+            # values.append(self.value_at(j, i))
+            values.append(self._grid[j, i])
 
         return values
 
@@ -99,7 +84,8 @@ class Sudoku:
         values = []
 
         for j in range(9):
-            values.append(self.value_at(i, j))
+            # values.append(self.value_at(i, j))
+            values.append(self._grid[i, j])
 
         return values
 
@@ -118,7 +104,8 @@ class Sudoku:
 
         for x in range(x_start, x_start + 3):
             for y in range(y_start, y_start + 3):
-                values.append(self.value_at(x, y))
+                # values.append(self.value_at(x, y))
+                values.append(self._grid[x, y])
 
         return values
 
@@ -135,20 +122,25 @@ class Sudoku:
             for value in values:
                 if value not in self.column_values(i):
                     result = False
+                    return result
 
                 if value not in self.row_values(i):
                     result = False
+                    return result
 
                 if value not in self.block_values(i):
                     result = False
+                    return result
 
         return result
 
     def __str__(self) -> str:
         representation = ""
 
-        for row in self._grid:
-            representation += row + "\n"
+        for y in range(9):
+            for x in range(9):
+                representation += str(self._grid[x, y])
+            representation += "\n"
 
         return representation.strip()
 
