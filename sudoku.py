@@ -12,6 +12,8 @@ class Sudoku:
         self.row_list: list[list[int]] = []
         self.column_list: list[list[int]] = []
         self.block_list: list[list[int]] = []
+        # make list for zero tiles
+        self._zeroes_list: list[tuple] = []
         y = 0
         x = 0
         # fill grid, columns, and rows with values from puzzle
@@ -19,6 +21,10 @@ class Sudoku:
             sing_row = []
             for element in puzzle_row:
                 val_sq = int(element)
+                # if value tile is zero, append to zeroes list
+                if val_sq == 0:
+                    zero_cor = x, y
+                    self._zeroes_list.append(zero_cor)
                 self._grid[x, y] = val_sq
                 sing_row.append(val_sq)
                 x += 1
@@ -62,6 +68,10 @@ class Sudoku:
         index_num = (y % 3) * 3 + x % 3
         rel_block[index_num] = value
 
+        # remove tile from zeroes list
+        filled_cor = x, y
+        self._zeroes_list.remove(filled_cor)
+
     def unplace(self, x: int, y: int) -> None:
         """Remove (unplace) a number at x,y."""
         # change value to zero in grid, rows and columns
@@ -75,10 +85,14 @@ class Sudoku:
         index_number = (y % 3) * 3 + x % 3
         rel_block[index_number] = 0
 
+        # add tile to zeroes list
+        zero_cor = x, y
+        self._zeroes_list.append(zero_cor)
+
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = self._grid[x, y]
-        
+
         return value
 
     def options_at(self, x: int, y: int) -> Iterable[int]:
@@ -103,10 +117,11 @@ class Sudoku:
         Returns the next index (x,y) that is empty (value 0).
         If there is no empty spot, returns (-1,-1)
         """
-        for y in range(9):
-            for x in range(9):
-                if self._grid[x, y] == 0:
-                    return x, y
+
+        # return coordinates from zeroes list
+        if self._zeroes_list:
+            x, y = self._zeroes_list[-1]
+            return x, y
 
         x, y = -1, -1
 
