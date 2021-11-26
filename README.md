@@ -68,3 +68,4 @@ This creates a file called `solve.prof` that can then be inspected through:
 ```
 snakeviz solve.prof
 ```# project-calculator-js-ceesparis
+# project-calculator-js-ceesparis
